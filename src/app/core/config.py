@@ -28,7 +28,10 @@ class Settings(BaseSettings):
   DESCRIPTION: str = ""
   SUMMARY: str = ""
   VERSION: str = "0.0.1"
+
+  # Versions
   API_V1_STR: str = "/api/v1"
+  API_V2_STR: str = "/api/v2"
 
   # MongoDB settings    
   MONGO_HOSTNAME: str
