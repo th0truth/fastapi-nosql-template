@@ -7,7 +7,7 @@ from core.db import (
   MongoClient,
   RedisClient
 )
-from api.api import api_router
+from api.api import api_main_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -36,4 +36,4 @@ app.add_middleware(
   allow_headers=["*"]
 )
 
-app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(api_main_router)
