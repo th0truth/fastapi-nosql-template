@@ -2,6 +2,7 @@ from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
+# Local Dependencies
 from core.config import settings
 from core.db import (
   MongoClient,
@@ -9,6 +10,7 @@ from core.db import (
 )
 from api.api import api_main_router
 
+# Initilize lifespan events
 @asynccontextmanager
 async def lifespan(app: FastAPI):
   await RedisClient.connect()
@@ -19,15 +21,17 @@ async def lifespan(app: FastAPI):
     await MongoClient.close()
     await RedisClient.close()
 
+# Initilize an app
 app = FastAPI(
   title=settings.NAME,
   description=settings.DESCRIPTION,
   summary=settings.SUMMARY,
   version=settings.VERSION,
-  openapi_url=f"{settings.API_V1_STR}/openapi.json",
+  openapi_url="/api/openapi.json",
   lifespan=lifespan
 )
 
+# Add middlewares
 app.add_middleware(
   CORSMiddleware,
   allow_origins=["*"],
@@ -36,4 +40,5 @@ app.add_middleware(
   allow_headers=["*"]
 )
 
+# Include main router to the app
 app.include_router(api_main_router)
