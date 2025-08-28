@@ -1,5 +1,5 @@
 [project]
-name = "unify"
+name = "fastapi-nosql-template"
 version = "0.1.0"
 description = ""
 authors = [
@@ -24,11 +24,12 @@ dependencies = [
     "cloudinary (>=1.44.1,<2.0.0)",
     "mailersend (>=0.6.0,<0.7.0)",
     "fastapi[standard] (>=0.116.1,<0.117.0)",
+    "cryptography>=45.0.6",
 ]
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-package-mode = false
+packages = [{ include = "app", from = "src" }]
