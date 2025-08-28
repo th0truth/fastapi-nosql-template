@@ -1,7 +1,5 @@
 # Dockerfile for a FastAPI application with a lightweight image
-
-FROM python:3.11-slim-bookworm
-WORKDIR /app
+FROM python:3.13-slim-bookworm
 
 ENV PYTHONUNBUFFERED=1
 
@@ -10,24 +8,34 @@ RUN apt-get update && \
   apt-get install -y --no-install-recommends gcc python3-dev && \
   rm -rf /var/lib/apt/lists/*
 
-# Create and activate virtual environment
-RUN python -m venv /app/.venv
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+ENV UV_COMPILE_BYTE=1
+
+ENV UV_LINK_MODE=copy
+
+# Work directory
+WORKDIR /app
+
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Install Poetry
-RUN pip install --no-cache-dir poetry
-
-# Copy Poetry configure files to the /app
-COPY ./pyproject.toml /app/
+COPY ./pyproject.toml ./uv.lock /app/
 
 # Install dependencies
-RUN poetry config virtualenvs.create false && \
-    poetry install --no-interaction --no-ansi
+RUN --mount=type=cache,target=/root/.cache/uv \
+--mount=type=bind,source=uv.lock,target=uv.lock \
+--mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+uv sync --frozen --no-install-project --no-dev
 
-# Copy application files
-COPY src/app /app/     
+# Copy the project into the image
+COPY ./src/app /app/     
 COPY .env /app/
 
-EXPOSE 10000
+# Sync the project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000", "--reload"]
+EXPOSE 8000
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
