@@ -8,11 +8,12 @@ class UserInitial(BaseModel):
   last_name: str
 
 class UserBase(UserInitial):
-  username: str
+  email: EmailStr
   role: str
+  account_date: datetime
 
 class UserPrivate(UserBase):
-  date: datetime
+  account_date: datetime
   email: Optional[EmailStr] = None
   password: Optional[str] = None
   scopes: list
