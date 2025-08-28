@@ -10,11 +10,11 @@ class UserCRUD(BaseCRUD):
   def __init__(self, db):
     super().__init__(db)
 
-  async def find(self, *, username: Union[str, int], exclude: Optional[List] = None) -> Union[dict, None]:
+  async def find(self, *, username: str, exclude: Optional[List] = None) -> Union[dict, None]:
     """Finds user profile using username."""
     try:
       for collection in await self.db.list_collection_names():
-        if (user := await self.db[collection].find_one({"username": username} or {"email.address": username})):
+        if (user := await self.db[collection].find_one({"username": username} or {"email": username})):
           break
       if exclude:
         for key in exclude:
