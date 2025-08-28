@@ -15,10 +15,10 @@ class BaseCRUD:
     """Reads specific object."""
     return await self.db[collection].find_one(filter)
 
-  async def read_all(self, collection: str, *, filter: Any = {}, min: int = 0, max: Optional[int] = None):    
+  async def read_all(self, collection: str, *, filter: Any = {}, offset: int = 0, length: Optional[int] = None):    
     """Reads all objects."""
-    objects = await self.db[collection].find(filter).to_list(max)
-    return objects[min:]
+    objects = await self.db[collection].find(filter).to_list(length)
+    return objects[offset:]
 
   async def update(self, collection: str, *, update: dict, filter: Any = {}):
     """Updates an object."""
