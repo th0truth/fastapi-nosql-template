@@ -1,7 +1,8 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, BeforeValidator
 from typing import Annotated, Optional
 
 PASSWORDstr = Annotated[str, Field(..., min_length=8, max_length=128)]
+PyObjectId = Annotated[str, BeforeValidator(str)]
 
 class UpdatePassword(BaseModel):
   current_password:  PASSWORDstr
