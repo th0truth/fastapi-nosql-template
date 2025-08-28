@@ -11,7 +11,6 @@ from fastapi import (
 import json
 from datetime import timedelta
 
-from core.logger import logger
 from core.config import settings
 from core.schemas.user import UserBase, UserUpdate
 from core.db import MongoClient
