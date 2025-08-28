@@ -8,6 +8,7 @@ class UserInitial(BaseModel):
   last_name: str
 
 class UserBase(UserInitial):
+  username: str
   email: EmailStr
   role: str
   account_date: datetime
