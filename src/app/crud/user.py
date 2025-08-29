@@ -14,7 +14,12 @@ class UserCRUD(BaseCRUD):
     """Finds user profile using username."""
     try:
       for collection in await self.db.list_collection_names():
-        if (user := await self.db[collection].find_one({"username": username} or {"email": username})):
+        if (user := await self.db[collection].find_one(
+          {"$or": [
+            {"username": {"$regex": username, "$options": "i"}},
+            {"email": {"$regex": username, "$options": "i"}},
+          ]}
+        )):
           break
       if exclude:
         for key in exclude:
