@@ -25,7 +25,7 @@ async def create_seller_account(
   Creates a seller account.
   """
   users_db = mongo.get_database("users")
-  if await UserCRUD(users_db).find(username=create_seller.email):
+  if await UserCRUD(users_db).find(username=create_seller.username):
     raise HTTPException(
       status_code=status.HTTP_409_CONFLICT,
       detail="User already exists."
