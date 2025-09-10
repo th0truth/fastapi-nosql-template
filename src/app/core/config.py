@@ -3,11 +3,19 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend
 
-from pydantic import BaseModel
-from typing import TypeVar
+from pydantic import BaseModel, AnyUrl, BeforeValidator, computed_field
+from typing import Any, TypeVar, Annotated, List
 
 # Define a generic type variable
 ModelType = TypeVar("TypeModel", bound=BaseModel)
+
+# Parse middleware cors
+def parse_cors(v: Any) -> List[str] | str:
+  if isinstance(v, str) and not v.startswith("["):
+    return [i.strip() for i in v.split(",")]
+  elif isinstance(v, list | str):
+    return v
+  raise ValueError(v)
 
 # Generate private key for JWT
 private_key = rsa.generate_private_key(
@@ -28,6 +36,19 @@ class Settings(BaseSettings):
   DESCRIPTION: str = ""
   SUMMARY: str = ""
   VERSION: str = "0.0.1"
+
+  FRONTEND_HOST: str = "http://localhost:8000"
+
+  BACKEND_CORS_ORIGINS: Annotated[
+    List[AnyUrl] | str, BeforeValidator(parse_cors)
+  ] = []
+  
+  @computed_field  # type: ignore[prop-decorator]
+  @property
+  def all_cors_origins(self) -> list[str]:
+    return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
+      self.FRONTEND_HOST
+    ]
 
   # Versions
   API_V1_STR: str = "/api/v1"

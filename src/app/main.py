@@ -31,14 +31,16 @@ app = FastAPI(
   lifespan=lifespan
 )
 
-# Add middlewares
-app.add_middleware(
-  CORSMiddleware,
-  allow_origins=["*"],
-  allow_credentials=True,
-  allow_methods=["*"],
-  allow_headers=["*"]
-)
+# Set all CORS enabled origins
+if settings.all_cors_origins:
+  # Add middlewares
+  app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.all_cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+  )
 
 # Include main router to the app
 app.include_router(api_main_router)
