@@ -3,25 +3,31 @@
 # Exit in case of error
 set -e
 
-# Check OS
+# Create venv
+
+if [ ! -d ".venv" ]; then
+  echo "Creating venv..."
+  python -m venv .venv
+fi
+
+# Activate the venv 
 if [[ "$(uname -s)" == "Linux" ]]; then
-	python3 -m venv venv
 	source .venv/bin/activate
 
 elif [[ "$(uname -s)" == "Darwin" ]]; then
-	python3 -m pip install virtualenv
-	python3 -m virtualenv venv
 	source ./venv/bin/activate
 
 elif [[ "$(uname -s)" == "CYGWIN"  || "$(uname -s)" == "MINGW"* ]]; then
-	python -m venv venv
-	.venv\Scripts\activate
-
+	source .venv\Scripts\activate
 else
 	echo "Unknown OS"
 fi
 
-pip3 install --upgrade pip
-pip3 install poetry
+# Upgrade pip inside venv
+pip install --upgrade pip
 
-poetry install --no-root
+# Install uv inside venv
+pip install --upgrade uv
+
+# Run uv
+uv run
