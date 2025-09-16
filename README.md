@@ -52,13 +52,13 @@ uv venv
 
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-docker compose up --build
+docker compose up # --build
 ```
 
 ## **Docs**
 
     # Swagger UI:
-    - http://localhost:10000/docs
+    - http://localhost/docs
 
     # ReDoc UI:
-    - http://localhost:10000/redoc
+    - http://localhost/redoc
