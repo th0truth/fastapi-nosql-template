@@ -1,10 +1,12 @@
 from typing import Optional
 import redis.asyncio as aioredis
 
+from core.security.utils import DBConnection
+
 from core.logger import logger
 from core.config import settings
 
-class RedisClient:
+class RedisClient(DBConnection):
   _instance: Optional["RedisClient"] = None
   _client: Optional[aioredis.Redis] = None
 

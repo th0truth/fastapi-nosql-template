@@ -7,10 +7,12 @@ from pymongo.errors import (
 )
 from typing import Optional
 
+from core.security.utils import DBConnection
+
 from core.logger import logger
 from core.config import settings
 
-class MongoClient:
+class MongoClient(DBConnection):
   _instance: Optional["MongoClient"] = None
   _client: Optional[AsyncMongoClient] = None
 
