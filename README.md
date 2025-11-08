@@ -1,5 +1,3 @@
-# FastAPI-NoSQL-Template
-
 ![alt logo](./images/logo.png)
 
 ## **Features**
