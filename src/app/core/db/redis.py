@@ -33,13 +33,13 @@ class RedisClient(DBConnection):
         )
         alive = await cls._client.ping()
         if not alive:
-          logger.error(f"Couldn't connect to Redis: {settings.REDIS_HOST}:{settings.REDIS_PORT}.")
-          return None
+          logger.error({"message": f"Couldn't connect to Redis: {settings.REDIS_HOST}:{settings.REDIS_PORT}."}, exc_info=True)
+          return
         logger.info("[+] Successfully connected to Redis.")
         return cls._client
-    except aioredis.ConnectionError as err:
-      logger.error({ "msg": "An error occured while connecting to Redis.", "detail": err})
-      return None
+    except aioredis.ConnectionError as e:
+      logger.error({"message": "An error occured while connecting to Redis.", "detail": str(e)})
+      return
   
   @classmethod
   async def close(cls):
@@ -50,7 +50,7 @@ class RedisClient(DBConnection):
       try:
         await cls._client.aclose()
         logger.info("[+] Redis connection closed.")
-      except Exception as err:
-        logger.error({"msg": "[x] Error closing Redis connection.", "detail": err})
+      except Exception as e:
+        logger.error({"message": "[x] Error closing Redis connection.", "detail": str(e)}, exc_info=True)
       finally:
         cls._client = None

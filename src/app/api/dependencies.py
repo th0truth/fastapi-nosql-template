@@ -5,6 +5,7 @@ from redis.asyncio import Redis
 from datetime import timedelta
 import json
 
+from core.logger import logger
 from core.config import settings
 
 from core.security.jwt import OAuthJWTBearer
@@ -57,10 +58,10 @@ async def get_current_user(
   if (user_cache := await redis.get(redis_key)):
     try:
       user = json.loads(user_cache)
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+      logger.error({"message": "[x] An error occured while decoding user's data from Redis cache.", "detail": str(e)}, exc_info=True)
       pass
-  
-  else:      
+    
     # Check if user exists in MongoDB
     users_db = mongo.get_database("users")
     if not (user := await UserCRUD(users_db).find(username=username, exclude=["_id", "password"])):

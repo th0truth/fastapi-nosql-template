@@ -11,7 +11,9 @@ from fastapi import (
 import json
 from datetime import timedelta
 
+from core.logger import logger
 from core.config import settings
+
 from core.schemas.user import UserBase, UserUpdate
 from core.db import MongoClient
 from redis.asyncio import Redis
@@ -43,7 +45,8 @@ async def read_user(
     try:
       # Parse user data to the JSON format
       user = json.loads(user_cache)
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+      logger.error({"message": "[x] An error occured while decoding user's data from Redis cache.", "detail": str(e)}, exc_info=True)
       pass
   else:
     # Check if user exists in MongoDB

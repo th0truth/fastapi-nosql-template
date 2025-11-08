@@ -1,3 +1,4 @@
+from tokenize import Triple
 from typing import Optional, List, Union
 
 from core.config import ModelType
@@ -25,8 +26,8 @@ class UserCRUD(BaseCRUD):
         for key in exclude:
           user.pop(key)
       return user
-    except Exception as err:
-      logger.error(err)
+    except Exception as e:
+      logger.error({"message": "[x] An error occured while searching user profile in MongoDB.", "detail": str(e)}, exc_info=True)
       return
 
   async def create(self, user: ModelType):

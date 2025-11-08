@@ -45,10 +45,9 @@ class MongoClient(DBConnection):
       )
       await cls._client.admin.command("ping")
       logger.info("[+] Successfully connected to MongoDB.")
-    except (ConfigurationError, OperationFailure) as err:
-      logger.error(
-        {"msg": "[x] Failed to connect to MongoDB.", "detail": err})
-      return None
+    except (ConfigurationError, OperationFailure) as e:
+      logger.error({"message": "[x] Failed to connect to MongoDB.", "detail": str(e)}, exc_info=True)
+      return
 
   @classmethod
   async def close(cls):
@@ -59,7 +58,7 @@ class MongoClient(DBConnection):
       try:
         await cls._client.aclose()
         logger.info("[+] MongoDB connection closed.")
-      except Exception as err:
-        logger.error({"msg": "[x] Error closing MongoDB connection.", "detail": err})
+      except Exception as e:
+        logger.error({"msg": "[x] Error closing MongoDB connection.", "detail": str(e)})
       finally:
         cls._client = None

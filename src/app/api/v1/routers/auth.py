@@ -54,7 +54,7 @@ async def login(
   # Store user profile in Redis cache 
   await redis.setex(f"cache:user:{username}:profile", timedelta(minutes=settings.CACHE_EXPIRE_MINUTES).seconds, json.dumps(user, default=str))
 
-  return TokenPayload(access_token=token["jwt"], role=role)
+  return TokenPayload(access_token=token.get("jwt"), role=role)
 
 @router.post("/token",
   status_code=status.HTTP_200_OK,
@@ -106,7 +106,7 @@ async def logout(
   Log out from user account.
   """
   # Decode a user's JWT 
-  payload = OAuthJWTBearer.decode(token.access_token)
+  payload = OAuthJWTBearer.decode(token=token.access_token)
   jti, exp = payload.get("jti"), payload.get("exp")
 
   # Check if jti is revoked

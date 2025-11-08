@@ -41,7 +41,8 @@ class OAuthJWTBearer:
     """
     try:
       return jwt.decode(jwt=token, key=settings.PUBLIC_KEY_PEM, algorithms=settings.JWT_ALGORITHM)
-    except (jwt.DecodeError, jwt.ExpiredSignatureError):
+    except (jwt.DecodeError, jwt.ExpiredSignatureError) as e:
+      logger.exception({"message": "Unable to decode a JWT.", "detail": str(e)}, exc_info=True)
       return None
       
   @staticmethod
