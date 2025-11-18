@@ -21,6 +21,7 @@ async def lifespan(app: FastAPI):
     await MongoClient.close()
     await RedisClient.close()
 
+
 # Initilize an app
 app = FastAPI(
   title=settings.NAME,

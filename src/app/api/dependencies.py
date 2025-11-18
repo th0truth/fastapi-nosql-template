@@ -12,11 +12,17 @@ from core.security.jwt import OAuthJWTBearer
 from core.db import MongoClient, RedisClient
 from crud import UserCRUD
 
+# OAuth2 scheme for authentication
+oauth2_scheme = OAuth2PasswordBearer(
+  tokenUrl=f"{settings.API_V1_STR}/auth/login",
+)
+
 async def get_mongo_client() -> AsyncGenerator[MongoClient, None]:
   """Dependency to get MongoDB client."""
   if not MongoClient._client:
     await MongoClient.connect()
   yield MongoClient._client
+
 
 async def get_redis_client() -> AsyncGenerator[RedisClient, None]:
   """Dependency to get Redis client."""
@@ -24,10 +30,6 @@ async def get_redis_client() -> AsyncGenerator[RedisClient, None]:
     await RedisClient.connect()
   yield RedisClient._client
 
-# OAuth2 scheme for authentication
-oauth2_scheme = OAuth2PasswordBearer(
-  tokenUrl=f"{settings.API_V1_STR}/auth/login",
-)
 
 async def get_current_user(
   token: Annotated[str, Depends(oauth2_scheme)],

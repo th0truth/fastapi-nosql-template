@@ -19,6 +19,7 @@ from crud import UserCRUD
 
 router = APIRouter(tags=["User"])
 
+
 @router.get("/me",
   status_code=status.HTTP_200_OK,
   response_model_exclude={"password"},
@@ -31,9 +32,39 @@ async def get_active_user(
   """
   return user
 
-@router.patch("/email/update",
+
+@router.patch("/me/password",
   status_code=status.HTTP_200_OK)
-async def add_user_email(
+async def update_password(
+  update_body: Annotated[UpdatePassword, Body()],
+  user: Annotated[dict, Depends(get_current_user)],
+  mongo: Annotated[MongoClient, Depends(get_mongo_client)],
+):
+  """
+  Updates the current user's password.
+  """
+  # Get the user email's from the MongoDB database
+  users_db = mongo.get_database("users")
+
+  username = user.get("username")
+
+  # Verify the user's credentials
+  if not (user := await UserCRUD(users_db).authenticate(username=username, plain_pwd=update_body.current_password)):
+    raise HTTPException(
+      status_code=status.HTTP_401_UNAUTHORIZED,
+      detail="Couldn't validate credentials",
+      headers={"WWW-Authenticate": "Bearer"}
+    )
+
+  # Update the user data
+  await UserCRUD(users_db).update(username=username, update={"password": Hash.hash(plain=update_body.new_password)})
+
+  return {"message": "The password was updated."}
+
+
+@router.patch("/email",
+  status_code=status.HTTP_200_OK)
+async def update_email(
   user_update: Annotated[UpdateEmail, Body()],
   user: Annotated[dict, Depends(get_current_user)],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],
@@ -68,35 +99,7 @@ async def add_user_email(
   return {"message": "Email added to the user account."}
 
 
-@router.patch("/password/update",
-  status_code=status.HTTP_200_OK)
-async def update_password_me(
-  update_body: Annotated[UpdatePassword, Body()],
-  user: Annotated[dict, Depends(get_current_user)],
-  mongo: Annotated[MongoClient, Depends(get_mongo_client)],
-):
-  """
-  Updates the current user's password.
-  """
-  # Get the user email's from the MongoDB database
-  users_db = mongo.get_database("users")
-
-  username = user.get("username")
-
-  # Verify the user's credentials
-  if not (user := await UserCRUD(users_db).authenticate(username=username, plain_pwd=update_body.current_password)):
-    raise HTTPException(
-      status_code=status.HTTP_401_UNAUTHORIZED,
-      detail="Couldn't validate credentials",
-      headers={"WWW-Authenticate": "Bearer"}
-    )
-
-  # Update the user data
-  await UserCRUD(users_db).update(username=username, update={"password": Hash.hash(plain=update_body.new_password)})
-
-  return {"message": "The password was updated."}
-
-@router.patch("/password/recovery",
+@router.patch("/password-recovery",
   status_code=status.HTTP_200_OK)
 async def password_recovery(
   update_body: Annotated[PasswordRecovery, Body()],

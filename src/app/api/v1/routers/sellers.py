@@ -15,6 +15,7 @@ from crud import UserCRUD
 
 router = APIRouter(tags=["Sellers"])
 
+
 @router.post("",
   status_code=status.HTTP_201_CREATED)
 async def create_seller_account(

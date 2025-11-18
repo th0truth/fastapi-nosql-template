@@ -1,10 +1,8 @@
-from tokenize import Triple
 from typing import Optional, List, Union
 
 from core.config import ModelType
 from core.logger import logger
 from core.security.utils import Hash
-
 from .base import BaseCRUD
 
 class UserCRUD(BaseCRUD):

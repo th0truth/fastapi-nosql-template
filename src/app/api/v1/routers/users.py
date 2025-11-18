@@ -25,7 +25,8 @@ from api.dependencies import (
 from crud import UserCRUD
 
 router = APIRouter(tags=["Users"])
-    
+
+
 @router.get("/{username}",
   status_code=status.HTTP_200_OK,
   response_model=UserBase,
@@ -62,7 +63,8 @@ async def read_user(
   
   return user
 
-@router.get("/{role}/all",
+
+@router.get("/{role}",
   status_code=status.HTTP_200_OK,
   response_model=List[UserBase],
   dependencies=[Security(get_current_user, scopes=["admin"])])
@@ -76,7 +78,8 @@ async def read_users(
   users_db = mongo.get_database("users")
   return await UserCRUD(users_db).read_all(role)
 
-@router.patch("/{username}/update",
+
+@router.patch("/{username}",
   status_code=status.HTTP_200_OK,
   dependencies=[Security(get_current_user, scopes=["admin"])])
 async def update_user(
@@ -102,7 +105,8 @@ async def update_user(
 
   return {"message": "The user account has been updated."}
 
-@router.delete("/{username}/delete",
+
+@router.delete("/{username}",
   status_code=status.HTTP_200_OK,
   dependencies=[Security(get_current_user, scopes=["admin"])])
 async def delete_user(

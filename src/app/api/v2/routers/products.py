@@ -20,7 +20,7 @@ from crud import BaseCRUD
 
 router = APIRouter(tags=["Products"])
 
-@router.get("/{category}/all",
+@router.get("/{category}",
   status_code=status.HTTP_200_OK,
   response_model=List[ProductItem],
   dependencies=[Security(get_current_user, scopes=["admin"])])
@@ -42,7 +42,7 @@ async def get_all_products(
   
   return products
 
-@router.post("/{category}/add",
+@router.post("/{category}",
   status_code=status.HTTP_201_CREATED)
 async def add_product(
   category: Annotated[str, Path()],
