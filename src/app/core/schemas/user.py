@@ -1,6 +1,7 @@
 from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
+from .etc import PASSWORDstr
 
 class UserInitial(BaseModel):
   first_name: str
@@ -16,7 +17,7 @@ class UserBase(UserInitial):
 class UserPrivate(UserBase):
   account_date: datetime
   email: Optional[EmailStr] = None
-  password: Optional[str] = None
+  password: Optional[PASSWORDstr] = None
   scopes: list
 
 class UserUpdate(BaseModel):
