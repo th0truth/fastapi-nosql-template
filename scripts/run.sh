@@ -4,4 +4,4 @@
 set -e
 set -x
 
-docker compose up
+docker compose up --build

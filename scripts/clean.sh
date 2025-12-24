@@ -1,20 +1,26 @@
 #!/bin/bash
 
-# Exit in case of error
-set -e
-set -x
+# Exit on any error
+set -euo pipefail
+
+# Colors for output
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+log_info() {
+  echo -e "${GREEN}[INFO]${NC} $1"
+}
 
 # Remove stopped containers
-echo "Removing stopped containers..."
+log_info "Removing stopped containers..."
 docker container prune -f
 
 # Optional: Remove unused images
-echo "Removing unused images..."
+log_info "Removing unused images..."
 docker image prune -f
 
 # Optional: Remove unused networks
-echo "Removing unused networks..."
+log_info "Removing unused networks..."
 docker network prune -f
 
-echo "Clean up completed."
-
+log_info "Clean up completed."
