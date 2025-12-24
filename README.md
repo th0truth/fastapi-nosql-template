@@ -45,10 +45,10 @@ bash scripts/run.sh
 Alternative way:
 
 ```bash
-pip install uv
 uv venv
-
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+uv sync
 
 docker compose up # --build
 ```
