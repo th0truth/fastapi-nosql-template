@@ -7,7 +7,7 @@ from .routers import (
   customers
 )
 
-# Initilize v1 router
+# Initialize v1 router
 api_v1_router = APIRouter()
 
 # Include routers

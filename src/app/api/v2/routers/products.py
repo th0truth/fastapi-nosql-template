@@ -41,6 +41,7 @@ async def get_all_products(
   
   return products
 
+
 @router.post("/{category}",
   status_code=status.HTTP_201_CREATED,
   dependencies=[Depends(limit_dependency)])

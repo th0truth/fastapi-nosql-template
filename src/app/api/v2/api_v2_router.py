@@ -3,7 +3,7 @@ from .routers import (
   products
 )
 
-# Initilize v2 router
+# Initialize v2 router
 api_v2_router = APIRouter()
 
 # Include routers

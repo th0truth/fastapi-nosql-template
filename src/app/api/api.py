@@ -6,7 +6,7 @@ from core.config import settings
 from .v1 import api_v1_router
 from .v2 import api_v2_router
 
-# Initilize main router
+# Initialize main router
 api_main_router = APIRouter()
 
 # Include API routers to the main router
