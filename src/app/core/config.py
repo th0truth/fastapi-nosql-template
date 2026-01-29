@@ -4,7 +4,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend
 
 from pydantic import BaseModel, AnyUrl, BeforeValidator, computed_field
-from typing import Any, TypeVar, Annotated, List
+from typing import Any, TypeVar, Annotated, List, Dict
 
 # Define a generic type variable
 ModelType = TypeVar("TypeModel", bound=BaseModel)
@@ -45,7 +45,7 @@ class Settings(BaseSettings):
   
   @computed_field  # type: ignore[prop-decorator]
   @property
-  def all_cors_origins(self) -> list[str]:
+  def all_cors_origins(self) -> List[str]:
     return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
       self.FRONTEND_HOST
     ]
@@ -74,6 +74,20 @@ class Settings(BaseSettings):
   
   CACHE_EXPIRE_MINUTES: int
   
+  # Rate limits
+  RATE_LIMIT_ANONYMOUS: str
+  RATE_LIMIT_SELLER: str
+  RATE_LIMIT_CUSTOMER: str
+
+  @computed_field  # type: ignore[prop-decorator]
+  @property
+  def RATE_LIMITS(self) -> Dict[str, str]:
+    return {
+    "anonymous": self.RATE_LIMIT_ANONYMOUS,
+    "seller": self.RATE_LIMIT_SELLER,
+    "customer": self.RATE_LIMIT_ANONYMOUS
+  }
+
   # JWT settings
   JWT_ALGORITHM: str = "RS256"
   JWT_EXPIRE_MINUTES: int
@@ -92,3 +106,5 @@ class Settings(BaseSettings):
   )
 
 settings = Settings()
+
+REDIS_URI = f"redis://{settings.REDIS_USERNAME}:{settings.REDIS_PASSWORD}@{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_DB}"

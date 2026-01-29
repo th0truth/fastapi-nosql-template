@@ -1,16 +1,35 @@
-from typing import Annotated, AsyncGenerator
-from fastapi import Depends, HTTPException, status
+from typing import Annotated, AsyncGenerator, Optional
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from redis.asyncio import Redis
 from datetime import timedelta
 import json
 
-from core.logger import logger
-from core.config import settings
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
+from core.logger import logger
+from core.config import settings, REDIS_URI
 from core.security.jwt import OAuthJWTBearer
 from core.db import MongoClient, RedisClient
 from crud import UserCRUD
+
+
+def get_identifier(request: Request) -> str:
+  """Get unique identifier for rate limiting."""
+  return getattr(request.state, "identifier", get_remote_address(request))
+
+
+# Initialize rate limiter
+limiter = Limiter(
+  key_func=get_identifier,
+  default_limits=list(settings.RATE_LIMIT_ANONYMOUS),
+  strategy="moving-window",
+  storage_uri=REDIS_URI,
+  headers_enabled=False,
+  swallow_errors=False
+)
+
 
 # OAuth2 scheme for authentication
 oauth2_scheme = OAuth2PasswordBearer(
@@ -85,3 +104,52 @@ async def get_current_user(
           detail="Not enough permissions."
         )
   return user
+
+
+def get_jwt_payload(request: Request) -> Optional[dict]:
+  """Extract and decode JWT payload from Authorization header"""
+  if (auth_token := request.headers.get("Authorization")):
+    try:
+      access_token = auth_token.split()[1]
+      if (payload := OAuthJWTBearer.decode(token=access_token)):
+        return payload
+    except Exception:
+      pass
+  return
+
+
+def _set_name_from_func(func):
+  """Helper to copy function name/module to decorated function."""
+  def decorator(f):
+    f.__name__ = func.__name__
+    f.__module__ = func.__module__
+    return f
+
+  return decorator
+
+
+async def limit_dependency(request: Request) -> None:
+  """Dependency that applies rate limiting dynamically based on request.state."""
+  limiter: Limiter = request.app.state.limiter
+
+  @_set_name_from_func(request.scope.get("endpoint"))
+  async def dummy(request: Request):
+    pass
+  
+  # Get dynamic values from request.state (set by middleware)
+  limit_value = getattr(request.state, "limit_value", settings.RATE_LIMIT_ANONYMOUS)
+
+  def key_func(request: Request) -> str:
+    return getattr(request.state, "identifier", request.client.host)
+
+  endpoint_key = f"{dummy.__module__}.{dummy.__name__}"
+  limiter._route_limits.pop(endpoint_key, None)
+
+  check_request_limit = limiter.limit(
+    limit_value=limit_value,
+    key_func=key_func,
+  )(dummy)
+    
+  await check_request_limit(request)
+
+  return
