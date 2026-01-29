@@ -6,7 +6,7 @@ from fastapi import (
   Depends,
   Body
 )
-from core.schemas.etc import UpdateEmail, UpdatePassword, PasswordRecovery
+from core.schemas.utils import UpdateEmail, UpdatePassword, PasswordRecovery
 from core.security.utils import Hash
 from core.database import MongoClient
 from redis.asyncio import Redis
@@ -103,7 +103,7 @@ async def update_email(
   return {"message": "Email added to the user account."}
 
 
-@router.patch("/password-recovery",
+@router.patch("/password",
   status_code=status.HTTP_200_OK,
   dependencies=[Depends(limit_dependency)])
 async def password_recovery(
