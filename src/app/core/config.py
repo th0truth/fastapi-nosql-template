@@ -84,8 +84,8 @@ class Settings(BaseSettings):
   def RATE_LIMITS(self) -> Dict[str, str]:
     return {
     "anonymous": self.RATE_LIMIT_ANONYMOUS,
-    "seller": self.RATE_LIMIT_SELLER,
-    "customer": self.RATE_LIMIT_ANONYMOUS
+    "sellers": self.RATE_LIMIT_SELLER,
+    "customers": self.RATE_LIMIT_ANONYMOUS
   }
 
   # JWT settings
