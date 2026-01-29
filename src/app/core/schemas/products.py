@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 from .utils import PyObjectId
 
 class ProductBase(BaseModel):
+  category: str
+  item: str
   brand: str
   title: str
   description: str
