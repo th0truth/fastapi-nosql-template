@@ -4,6 +4,9 @@ from typing import Annotated, Optional
 PASSWORDstr = Annotated[str, Field(..., min_length=8, max_length=128)]
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
+class HealthCheck(BaseModel):
+  status: str = "ok"
+
 class UpdatePassword(BaseModel):
   current_password:  PASSWORDstr
   new_password: PASSWORDstr
