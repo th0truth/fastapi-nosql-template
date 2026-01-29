@@ -6,18 +6,45 @@ from fastapi import (
   status,
   Depends,
   Path,
-  Query
+  Query,
+  Body
 )
 from core.database import MongoClient
-from core.schemas.products import ProductItem
+from core.schemas.products import ProductCreate, ProductItem
+from core.schemas.sellers import SellerBase
 from api.dependencies import (
   get_mongo_client,
   get_current_user
 )
 from api.dependencies import limit_dependency
-from crud import BaseCRUD
+from crud import ProductCRUD
 
 router = APIRouter(tags=["Products"])
+
+
+@router.post("/",
+  status_code=status.HTTP_201_CREATED,
+  dependencies=[Depends(limit_dependency)],
+  response_model=ProductItem)
+async def create_product(
+  product: Annotated[ProductCreate, Body()],
+  user: Annotated[dict, Security(get_mongo_client, scopes=["seller"])],
+  mongo: Annotated[MongoClient, Depends(get_mongo_client)]
+):
+  """
+  Add product to the store.
+  """
+
+  products_db = mongo.get_database("products")
+  if product.category not in await products_db.list_collection_names():
+    raise HTTPException(
+      status_code=status.HTTP_404_NOT_FOUND,
+      detail="Category not found."
+    )
+  
+  await ProductCRUD(products_db).create(product.category, product)
+  return product
+
 
 @router.get("/{category}",
   status_code=status.HTTP_200_OK,
@@ -33,30 +60,10 @@ async def get_all_products(
   Returns list of all .
   """
   products_db = mongo.get_database("products")
-  if not (products := await BaseCRUD(products_db).read_all(category, offset=offset, length=length)):
+  if not (products := await ProductCRUD(products_db).read_all(category, offset=offset, length=length)):
     raise HTTPException(
       status_code=status.HTTP_404_NOT_FOUND,
       detail="Products not found."
     )
   
   return products
-
-
-@router.post("/{category}",
-  status_code=status.HTTP_201_CREATED,
-  dependencies=[Depends(limit_dependency)])
-async def add_product(
-  category: Annotated[str, Path()],
-  user: Annotated[dict, Security(get_mongo_client, scopes=["seller", "admin"])],
-  mongo: Annotated[MongoClient, Depends(get_mongo_client)]
-):
-  """
-  Add product to the store.
-  """
-
-  products_db = mongo.get_database("products")
-  if category not in await products_db.list_collection_names():
-    raise HTTPException(
-      status_code=status.HTTP_404_NOT_FOUND,
-      detail="Category not found."
-    )
