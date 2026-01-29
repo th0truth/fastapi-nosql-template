@@ -15,8 +15,10 @@ from core.logger import logger
 from core.config import settings
 
 from core.schemas.user import UserBase, UserUpdate
-from core.database import MongoClient
-from redis.asyncio import Redis
+from core.database import (
+  MongoClient,
+  RedisClient
+)
 from api.dependencies import (
   get_mongo_client,
   get_redis_client,
@@ -35,7 +37,7 @@ router = APIRouter(tags=["Users"])
 async def read_user(
   username: Annotated[str, Path()],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],
-  redis: Annotated[Redis, Depends(get_redis_client)]
+  redis: Annotated[RedisClient, Depends(get_redis_client)]
 ):
   """
   Returns user by `username`.
@@ -87,7 +89,7 @@ async def update_user(
   username: Annotated[str, Path()],
   update_user: Annotated[UserUpdate, Body()],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],
-  redis: Annotated[Redis, Depends(get_redis_client)]
+  redis: Annotated[RedisClient, Depends(get_redis_client)]
 ):
   """
   Updates user data by `username`.
@@ -113,7 +115,7 @@ async def update_user(
 async def delete_user(
   username: Annotated[str, Path()],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],
-  redis: Annotated[Redis, Depends(get_redis_client)]
+  redis: Annotated[RedisClient, Depends(get_redis_client)]
 ):
   """
   Deletes an exiting user account.

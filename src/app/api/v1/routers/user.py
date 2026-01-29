@@ -8,8 +8,10 @@ from fastapi import (
 )
 from core.schemas.utils import UpdateEmail, UpdatePassword, PasswordRecovery
 from core.security.utils import Hash
-from core.database import MongoClient
-from redis.asyncio import Redis
+from core.database import (
+  MongoClient,
+  RedisClient
+)
 from api.dependencies import (
   get_mongo_client,
   get_redis_client,
@@ -72,7 +74,7 @@ async def update_email(
   user_update: Annotated[UpdateEmail, Body()],
   user: Annotated[dict, Depends(get_current_user)],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],
-  redis: Annotated[Redis, Depends(get_redis_client)],
+  redis: Annotated[RedisClient, Depends(get_redis_client)],
 ):
   """
   Adds an email to the user account.

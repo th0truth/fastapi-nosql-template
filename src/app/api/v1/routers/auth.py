@@ -13,8 +13,7 @@ import json
 from core.config import settings
 from core.schemas.token import TokenBase, TokenPayload
 from core.security.jwt import OAuthJWTBearer
-from redis.asyncio import Redis
-from core.database import MongoClient
+from core.database import MongoClient, RedisClient
 from api.dependencies import (
   get_mongo_client,
   get_redis_client,
@@ -33,7 +32,7 @@ router = APIRouter(tags=["Authentication"])
 async def login(
   form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],
-  redis: Annotated[Redis, Depends(get_redis_client)] 
+  redis: Annotated[RedisClient, Depends(get_redis_client)] 
 ):
   """
   Log in using user credentials.
@@ -65,7 +64,7 @@ async def login(
   dependencies=[Depends(get_current_user), Depends(limit_dependency)])
 async def auth_token(
   token: Annotated[TokenBase, Header(alias="Authorization")],
-  redis: Annotated[Redis, Depends(get_redis_client)]
+  redis: Annotated[RedisClient, Depends(get_redis_client)]
 ):
   """
   Log in using an access token.
@@ -105,7 +104,7 @@ async def auth_token(
   dependencies=[Depends(get_current_user), Depends(limit_dependency)])
 async def logout(
   token: Annotated[TokenBase, Header()],
-  redis: Annotated[Redis, Depends(get_redis_client)]
+  redis: Annotated[RedisClient, Depends(get_redis_client)]
 ):
   """
   Log out from user account.
