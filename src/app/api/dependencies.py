@@ -1,7 +1,6 @@
 from typing import Annotated, AsyncGenerator, Optional
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, SecurityScopes
-from redis.asyncio import Redis
 from datetime import timedelta
 import json
 
@@ -52,7 +51,7 @@ async def get_redis_client() -> AsyncGenerator[RedisClient, None]:
 
 async def get_current_user(
   token: Annotated[str, Depends(oauth2_scheme)],
-  redis: Annotated[Redis, Depends(get_redis_client)],
+  redis: Annotated[RedisClient, Depends(get_redis_client)],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],
   security_scopes: SecurityScopes
 ) -> dict:
@@ -74,6 +73,7 @@ async def get_current_user(
     )
 
   redis_key = f"cache:user:{username}:profile"
+  user = None
 
   # Check if user data exists in Redis cache
   if (user_cache := await redis.get(redis_key)):
@@ -83,7 +83,8 @@ async def get_current_user(
       logger.error({"message": "[x] An error occured while decoding user's data from Redis cache.", "detail": str(e)}, exc_info=True)
       pass
     
-    # Check if user exists in MongoDB
+  # If not in cache or cache failed, check MongoDB    
+  if user is None:
     users_db = mongo.get_database("users")
     if not (user := await UserCRUD(users_db).find(username=username, exclude=["_id", "password"])):
       raise HTTPException(
@@ -97,12 +98,13 @@ async def get_current_user(
   
   # Check a user's privileges 
   if security_scopes.scopes:
-    for scope in user.get("scopes"):
-      if scope not in security_scopes.scopes:
-        raise HTTPException(
-          status_code=status.HTTP_404_NOT_FOUND,
-          detail="Not enough permissions."
-        )
+    user_scopes = user.get("scopes", [])
+    if not any(scope in security_scopes.scopes for scope in user_scopes):
+      raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Not enough permissions."
+      )
+
   return user
 
 
