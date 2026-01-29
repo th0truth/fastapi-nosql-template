@@ -11,13 +11,15 @@ from core.schemas.sellers import SellerBase
 from api.dependencies import (
   get_mongo_client
 )
+from api.dependencies import limit_dependency
 from crud import UserCRUD
 
 router = APIRouter(tags=["Sellers"])
 
 
 @router.post("",
-  status_code=status.HTTP_201_CREATED)
+  status_code=status.HTTP_201_CREATED,
+  dependencies=[Depends(limit_dependency)])
 async def create_seller_account(
   create_seller: Annotated[SellerBase, Body()],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],

@@ -22,6 +22,7 @@ from api.dependencies import (
   get_redis_client,
   get_current_user
 )
+from api.dependencies import limit_dependency
 from crud import UserCRUD
 
 router = APIRouter(tags=["Users"])
@@ -30,7 +31,7 @@ router = APIRouter(tags=["Users"])
 @router.get("/{username}",
   status_code=status.HTTP_200_OK,
   response_model=UserBase,
-  dependencies=[Security(get_current_user, scopes=["admin"])])
+  dependencies=[Security(get_current_user, scopes=["admin"]), Depends(limit_dependency)])
 async def read_user(
   username: Annotated[str, Path()],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],
@@ -67,7 +68,7 @@ async def read_user(
 @router.get("/{role}",
   status_code=status.HTTP_200_OK,
   response_model=List[UserBase],
-  dependencies=[Security(get_current_user, scopes=["admin"])])
+  dependencies=[Security(get_current_user, scopes=["admin"]), Depends(limit_dependency)])
 async def read_users(
   role: Annotated[str, Path()],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],   
@@ -108,7 +109,7 @@ async def update_user(
 
 @router.delete("/{username}",
   status_code=status.HTTP_200_OK,
-  dependencies=[Security(get_current_user, scopes=["admin"])])
+  dependencies=[Security(get_current_user, scopes=["admin"]), Depends(limit_dependency)])
 async def delete_user(
   username: Annotated[str, Path()],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],

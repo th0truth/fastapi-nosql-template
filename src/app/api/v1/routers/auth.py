@@ -20,6 +20,7 @@ from api.dependencies import (
   get_redis_client,
   get_current_user
 )
+from api.dependencies import limit_dependency
 from crud import UserCRUD
 
 router = APIRouter(tags=["Authentication"])
@@ -27,7 +28,8 @@ router = APIRouter(tags=["Authentication"])
 
 @router.post("/login",
   status_code=status.HTTP_200_OK,
-  response_model=TokenPayload)
+  response_model=TokenPayload,
+  dependencies=[Depends(limit_dependency)])
 async def login(
   form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],
@@ -59,7 +61,8 @@ async def login(
 
 @router.post("/token",
   status_code=status.HTTP_200_OK,
-  response_model=TokenPayload)
+  response_model=TokenPayload,
+  dependencies=[Depends(get_current_user), Depends(limit_dependency)])
 async def auth_token(
   token: Annotated[TokenBase, Header(alias="Authorization")],
   redis: Annotated[Redis, Depends(get_redis_client)]
@@ -99,7 +102,7 @@ async def auth_token(
 
 @router.post("/logout",
   status_code=status.HTTP_200_OK,
-  dependencies=[Depends(get_current_user)])
+  dependencies=[Depends(get_current_user), Depends(limit_dependency)])
 async def logout(
   token: Annotated[TokenBase, Header()],
   redis: Annotated[Redis, Depends(get_redis_client)]

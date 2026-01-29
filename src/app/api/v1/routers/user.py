@@ -15,6 +15,7 @@ from api.dependencies import (
   get_redis_client,
   get_current_user
 )
+from api.dependencies import limit_dependency
 from crud import UserCRUD
 
 router = APIRouter(tags=["User"])
@@ -23,7 +24,8 @@ router = APIRouter(tags=["User"])
 @router.get("/me",
   status_code=status.HTTP_200_OK,
   response_model_exclude={"password"},
-  response_model_exclude_none=True)
+  response_model_exclude_none=True,
+  dependencies=[Depends(limit_dependency)])
 async def get_active_user(
   user: Annotated[dict, Depends(get_current_user)]
 ):
@@ -34,7 +36,8 @@ async def get_active_user(
 
 
 @router.patch("/me/password",
-  status_code=status.HTTP_200_OK)
+  status_code=status.HTTP_200_OK,
+  dependencies=[Depends(limit_dependency)])
 async def update_password(
   update_body: Annotated[UpdatePassword, Body()],
   user: Annotated[dict, Depends(get_current_user)],
@@ -63,7 +66,8 @@ async def update_password(
 
 
 @router.patch("/email",
-  status_code=status.HTTP_200_OK)
+  status_code=status.HTTP_200_OK,
+  dependencies=[Depends(limit_dependency)])
 async def update_email(
   user_update: Annotated[UpdateEmail, Body()],
   user: Annotated[dict, Depends(get_current_user)],
@@ -100,7 +104,8 @@ async def update_email(
 
 
 @router.patch("/password-recovery",
-  status_code=status.HTTP_200_OK)
+  status_code=status.HTTP_200_OK,
+  dependencies=[Depends(limit_dependency)])
 async def password_recovery(
   update_body: Annotated[PasswordRecovery, Body()],
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],
