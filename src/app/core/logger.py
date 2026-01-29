@@ -23,25 +23,30 @@ class JsonFormatter(logging.Formatter):
     
 # Define the logging configuration
 log_config = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "json": {
-            "()": JsonFormatter
-        }
+  "version": 1,
+  "disable_existing_loggers": False,
+  "formatters": {
+    "json": {
+      "()": JsonFormatter
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "level": "DEBUG",
+      "formatter": "json",
+      "stream": "ext://sys.stdout",
     },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "level": "DEBUG",
-            "formatter": "json",
-            "stream": "ext://sys.stdout",
-        },
-    },
-    "loggers": {
-        "app": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
-    },
-    "root": {"handlers": ["console"], "level": "DEBUG"},
+  },
+  "loggers": {
+    "app": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
+
+    "pymongo": {"level": "WARNING"},
+    "pymongo.command": {"level": "WARNING"},
+    "pymongo.connection": {"level": "WARNING"},
+    "pymongo.topology": {"level": "WARNING"},
+  },
+  "root": {"handlers": ["console"], "level": "DEBUG"},
 }
 
 
