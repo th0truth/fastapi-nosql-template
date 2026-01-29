@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from redis.asyncio import Redis
+from core.database import RedisClient
 from typing import Optional
 import uuid
 import jwt
@@ -42,8 +42,8 @@ class OAuthJWTBearer:
     try:
       return jwt.decode(jwt=token, key=settings.PUBLIC_KEY_PEM, algorithms=settings.JWT_ALGORITHM)
     except (jwt.DecodeError, jwt.ExpiredSignatureError) as e:
-      logger.exception({"message": "Unable to decode a JWT.", "detail": str(e)}, exc_info=True)
-      return None
+      logger.exception({"message": "Unable to decode a JWT.", "detail": str(e)}, exc_info=False)
+      return
       
   @staticmethod
   async def refresh(payload: dict) -> str:
@@ -56,7 +56,7 @@ class OAuthJWTBearer:
     return jwt.encode(payload=payload, key=settings.PRIVATE_KEY_PEM, algorithm=settings.JWT_ALGORITHM)
   
   @staticmethod
-  async def add_jti_to_blacklist(redis: Redis, *, jti: str, exp: int) -> bool:
+  async def add_jti_to_blacklist(redis: RedisClient, *, jti: str, exp: int) -> bool:
     """
     Adds `jti` to the blacklist.
     """
@@ -71,7 +71,7 @@ class OAuthJWTBearer:
     return True
   
   @staticmethod
-  async def is_jti_in_blacklist(redis: Redis, *, jti: str) -> bool:
+  async def is_jti_in_blacklist(redis: RedisClient, *, jti: str) -> bool:
     """
     Checks if the `jti` is in blacklist.
     """
