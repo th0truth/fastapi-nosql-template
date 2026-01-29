@@ -24,34 +24,52 @@ async def lifespan(app: FastAPI):
     await RedisClient.close()
 
 
-# Initialize an app
-app = FastAPI(
-  title=settings.NAME,
-  description=settings.DESCRIPTION,
-  summary=settings.SUMMARY,
-  version=settings.VERSION,
-  openapi_url="/openapi.json",
-  lifespan=lifespan
-)
-
-# Add middleware RateLimitMiddleware
-app.add_middleware(RateLimitMiddleware)
-
-# Attach limiter to the app
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
-
-
-# Set all CORS enabled origins
-if settings.all_cors_origins:
-  # Add middlewares
-  app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.all_cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
+def create_app() -> FastAPI:
+  # Initialize an app
+  app = FastAPI(
+    title=settings.NAME,
+    description=settings.DESCRIPTION,
+    summary=settings.SUMMARY,
+    version=settings.VERSION,
+    openapi_url="/openapi.json",
+    lifespan=lifespan
   )
 
-# Include main router to the app
-app.include_router(api_main_router)
+  # Add middleware RateLimitMiddleware
+  app.add_middleware(RateLimitMiddleware)
+
+  # Attach limiter to the app
+  app.state.limiter = limiter
+  app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
+
+
+  # Set all CORS enabled origins
+  if settings.all_cors_origins:
+    # Add middlewares
+    app.add_middleware(
+      CORSMiddleware,
+      allow_origins=settings.all_cors_origins,
+      allow_credentials=True,
+      allow_methods=["*"],
+      allow_headers=["*"]
+    )
+
+  # Include main router to the app
+  app.include_router(api_main_router)
+
+  return app
+  
+
+# Create the app instance at module level
+app = create_app()
+
+
+if __name__ == "__main__":
+  import uvicorn
+  uvicorn.run(
+    app="main:app",
+    host="0.0.0.0",
+    port=8000,
+    reload=True,
+    log_level="info"
+  )
