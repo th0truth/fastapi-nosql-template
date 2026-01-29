@@ -30,7 +30,6 @@ uv sync --frozen --no-install-project --no-dev
 
 # Copy the project into the image
 COPY ./src/app /app/     
-COPY .env /app/
 
 # Sync the project
 RUN --mount=type=cache,target=/root/.cache/uv \
