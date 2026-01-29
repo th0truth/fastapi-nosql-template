@@ -8,7 +8,7 @@ from fastapi import (
   Path,
   Query
 )
-from core.db import MongoClient
+from core.database import MongoClient
 from core.schemas.products import ProductItem
 from api.dependencies import (
   get_mongo_client,

@@ -8,7 +8,7 @@ from fastapi import (
 )
 from core.schemas.etc import UpdateEmail, UpdatePassword, PasswordRecovery
 from core.security.utils import Hash
-from core.db import MongoClient
+from core.database import MongoClient
 from redis.asyncio import Redis
 from api.dependencies import (
   get_mongo_client,

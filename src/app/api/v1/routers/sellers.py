@@ -6,7 +6,7 @@ from fastapi import (
   Depends,
   Body
 )
-from core.db import MongoClient
+from core.database import MongoClient
 from core.schemas.sellers import SellerBase
 from api.dependencies import (
   get_mongo_client

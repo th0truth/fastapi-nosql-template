@@ -11,7 +11,7 @@ from slowapi.util import get_remote_address
 from core.logger import logger
 from core.config import settings, REDIS_URI
 from core.security.jwt import OAuthJWTBearer
-from core.db import MongoClient, RedisClient
+from core.database import MongoClient, RedisClient
 from crud import UserCRUD
 
 

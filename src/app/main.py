@@ -8,7 +8,7 @@ from core.middleware import RateLimitMiddleware
 from core.errors import rate_limit_exceeded_handler
 
 from core.config import settings
-from core.db import MongoClient, RedisClient
+from core.database import MongoClient, RedisClient
 from api.dependencies import limiter
 from api.api import api_main_router
 
