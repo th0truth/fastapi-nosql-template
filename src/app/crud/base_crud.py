@@ -9,7 +9,7 @@ class BaseCRUD:
 
   async def create(self, collection: str, model: ModelType):
     """Creates an object."""
-    await self.db[collection].insert_one(model.model_dump())
+    return await self.db[collection].insert_one(model.model_dump())
 
   async def read(self, collection: str, filter: Any):
     """Reads specific object."""
