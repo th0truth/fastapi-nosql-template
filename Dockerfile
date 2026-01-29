@@ -1,5 +1,4 @@
-# Dockerfile for a FastAPI application with a lightweight image
-FROM python:3.13-slim-bookworm
+FROM python:3.11-slim-bookworm
 
 ENV PYTHONUNBUFFERED=1
 
@@ -37,4 +36,4 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4", "--log-level", "info", "--proxy-headers"]

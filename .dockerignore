@@ -1,8 +1,81 @@
+# Environment files - CRITICAL
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+.env.test
+
 # Python
-__pycache__
-app.egg-info
-*.pyc
-.mypy_cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Testing
+.pytest_cache/
 .coverage
-htmlcov
-.venv
+htmlcov/
+.tox/
+.hypothesis/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Version Control
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+README.md
+LICENSE
+docs/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Database files (if any)
+*.db
+*.sqlite
+*.sqlite3
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Node (if you have any frontend)
+node_modules/
+npm-debug.log
