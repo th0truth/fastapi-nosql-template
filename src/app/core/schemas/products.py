@@ -2,7 +2,7 @@ from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, Field
 
-from .etc import PyObjectId
+from .utils import PyObjectId
 
 class ProductBase(BaseModel):
   brand: str

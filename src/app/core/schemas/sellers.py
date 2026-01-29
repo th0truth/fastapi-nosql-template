@@ -3,7 +3,7 @@ from typing import Optional
 from .user import UserPrivate
 
 class SellerBase(UserPrivate):
-  role: str = "seller"
+  role: str = "sellers"
   scopes: list = [
     "seller"
   ]

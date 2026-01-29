@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
-from .etc import PASSWORDstr
+from .utils import PASSWORDstr
 
 class UserInitial(BaseModel):
   first_name: str
