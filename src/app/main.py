@@ -1,7 +1,9 @@
 from prometheus_fastapi_instrumentator import Instrumentator
+from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+import itsdangerous
 
 # Rate Limiting Dependencies
 from slowapi.errors import RateLimitExceeded
@@ -26,7 +28,7 @@ async def lifespan(app: FastAPI):
 
 
 def create_app() -> FastAPI:
-  # Initialize an app
+  # Initialize the app
   app = FastAPI(
     title=settings.NAME,
     description=settings.DESCRIPTION,
@@ -36,8 +38,15 @@ def create_app() -> FastAPI:
     lifespan=lifespan
   )
 
-  # Add middleware RateLimitMiddleware
+  # Add middleware to the app
   app.add_middleware(RateLimitMiddleware)
+  app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SECRET_KEY,
+    session_cookie="session",
+    same_site="lax",
+    https_only=False
+  )
 
   # Attach limiter to the app
   app.state.limiter = limiter

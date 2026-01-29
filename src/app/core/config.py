@@ -4,7 +4,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend
 
 from pydantic import BaseModel, AnyUrl, BeforeValidator, computed_field
-from typing import Any, TypeVar, Annotated, List, Dict
+from typing import Any, TypeVar, Annotated, List, Dict, Optional
 
 # Define a generic type variable
 ModelType = TypeVar("TypeModel", bound=BaseModel)
@@ -78,6 +78,14 @@ class Settings(BaseSettings):
   RATE_LIMIT_ANONYMOUS: str
   RATE_LIMIT_SELLER: str
   RATE_LIMIT_CUSTOMER: str
+
+  # Google settings (OAuth)
+  GOOGLE_CLIENT_ID: Optional[str]
+  GOOGLE_CLIENT_SECRET: Optional[str]
+  GOOGLE_FRONTEND_REDIRECT: Optional[str]
+
+  SECRET_KEY: str
+
 
   @computed_field  # type: ignore[prop-decorator]
   @property
