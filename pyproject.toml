@@ -27,6 +27,7 @@ dependencies = [
     "fastapi[standard] (>=0.116.1,<0.117.0)",
     "cryptography>=45.0.6",
     "slowapi>=0.1.9",
+    "prometheus-fastapi-instrumentator>=7.1.0",
 ]
 
 [tool.setuptools]
