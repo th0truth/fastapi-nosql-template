@@ -1,3 +1,4 @@
+from prometheus_fastapi_instrumentator import Instrumentator
 from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -53,6 +54,9 @@ def create_app() -> FastAPI:
       allow_methods=["*"],
       allow_headers=["*"]
     )
+
+  # Monitor the app using Prometheus
+  Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 
   # Include main router to the app
   app.include_router(api_main_router)
