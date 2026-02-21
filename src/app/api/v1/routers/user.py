@@ -6,6 +6,7 @@ from fastapi import (
   Depends,
   Body
 )
+from core.schemas.user import UserUpdate
 from core.schemas.utils import UpdateEmail, UpdatePassword, PasswordRecovery
 from core.security.utils import Hash
 from core.database import (
@@ -35,6 +36,34 @@ async def get_active_user(
   Returns user data.
   """
   return user
+
+
+@router.patch("/me",
+  status_code=status.HTTP_200_OK,
+  dependencies=[Depends(limit_dependency)])
+async def update_user_profile(
+  user_update: Annotated[UserUpdate, Body()],
+  user: Annotated[dict, Depends(get_current_user)],
+  mongo: Annotated[MongoClient, Depends(get_mongo_client)],
+  redis: Annotated[RedisClient, Depends(get_redis_client)],
+):
+  """
+  Updates the current user's profile.
+  """
+  users_db = mongo.get_database("users")
+  username = user.get("username")
+
+  # Update the user data
+  if not (await UserCRUD(users_db).update(username=username, update=user_update.model_dump(exclude_unset=True))):
+    raise HTTPException(
+      status_code=status.HTTP_404_NOT_FOUND,
+      detail="User not found."
+    )
+
+  # Delete user profile from Redis cache
+  await redis.delete(f"cache:user:{username}:profile")
+
+  return {"message": "The profile was updated."}
 
 
 @router.patch("/me/password",
