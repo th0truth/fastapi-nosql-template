@@ -126,7 +126,7 @@ async def update_email(
     )
 
   # Update the user data
-  await UserCRUD(users_db).update(username=username, update_doc={"email": {"address": user_update.email, "is_verified": False}})
+  await UserCRUD(users_db).update(username=username, update={"email": {"address": user_update.email, "is_verified": False}})
 
   # Delete user profile from Redis cache 
   await redis.delete(f"cache:user:{username}:profile")

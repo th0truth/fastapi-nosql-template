@@ -67,7 +67,7 @@ async def read_user(
   return user
 
 
-@router.get("/{role}",
+@router.get("/all/{role}",
   status_code=status.HTTP_200_OK,
   response_model=List[UserBase],
   dependencies=[Security(get_current_user, scopes=["admin"]), Depends(limit_dependency)])
@@ -76,7 +76,7 @@ async def read_users(
   mongo: Annotated[MongoClient, Depends(get_mongo_client)],   
 ):
   """
-  Returns all users.
+  Returns all users by role.
   """
   users_db = mongo.get_database("users")
   return await UserCRUD(users_db).read_all(role)

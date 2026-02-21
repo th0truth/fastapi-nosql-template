@@ -18,7 +18,7 @@ class BaseCRUD:
   async def read_all(self, collection: str, *, filter: Any = {}, offset: int = 0, length: Optional[int] = None):    
     """Reads all objects."""
     objects = await self.db[collection].find(filter).to_list(length)
-    return objects[offset:]
+    return objects[offset:] if objects else []
 
   async def update(self, collection: str, *, update: dict, filter: Any = {}):
     """Updates an object."""

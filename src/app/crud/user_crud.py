@@ -12,6 +12,7 @@ class UserCRUD(BaseCRUD):
   async def find(self, *, username: str, exclude: Optional[List] = None) -> Union[dict, None]:
     """Finds user profile using username."""
     try:
+      user = None
       for collection in await self.db.list_collection_names():
         if (user := await self.db[collection].find_one(
           {"$or": [
@@ -20,6 +21,10 @@ class UserCRUD(BaseCRUD):
           ]}
         )):
           break
+      
+      if not user:
+        return None
+
       if exclude:
         for key in exclude:
           user.pop(key)
