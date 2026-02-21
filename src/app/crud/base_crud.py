@@ -29,3 +29,8 @@ class BaseCRUD:
     """Updates all objects."""
     result = await self.db[collection].update_many(filter, update={"$set": update})
     return result.modified_count
+
+  async def delete(self, collection: str, filter: Any = {}):
+    """Deletes an object."""
+    result = await self.db[collection].delete_one(filter)
+    return result.deleted_count
