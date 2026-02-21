@@ -18,3 +18,10 @@ class ProductItem(ProductBase):
 
 class ProductCreate(ProductBase):
   date: datetime
+
+class ProductUpdate(BaseModel):
+  item: Optional[str] = None
+  brand: Optional[str] = None
+  title: Optional[str] = None
+  description: Optional[str] = None
+  price: Optional[int] = None
