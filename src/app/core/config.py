@@ -12,7 +12,12 @@ ModelType = TypeVar("TypeModel", bound=BaseModel)
 # Parse middleware cors
 def parse_cors(v: Any) -> List[str] | str:
   if isinstance(v, str) and not v.startswith("["):
-    return [i.strip() for i in v.split(",")]
+    # Filter out comments (starting with #) and empty strings
+    return [
+      item.strip() 
+      for item in v.split(",") 
+      if item.strip() and not item.strip().startswith("#")
+    ]
   elif isinstance(v, list | str):
     return v
   raise ValueError(v)
@@ -28,11 +33,11 @@ class Settings(BaseSettings):
   model_config = SettingsConfigDict(
     env_file=".env",
     	env_ignore_empty=True,
-      extra="ignore",
+      extra="ignore"
   	)
     
   # App settings
-  NAME: str
+  NAME: str = "FastAPI-NoSQL-Template"
   DESCRIPTION: str = ""
   SUMMARY: str = ""
   VERSION: str = "0.0.1"
@@ -55,36 +60,49 @@ class Settings(BaseSettings):
   API_V2_STR: str = "/api/v2"
 
   # MongoDB settings    
-  MONGO_HOSTNAME: str
-  MONGO_USERNAME: str
-  MONGO_PASSWORD: str
-  MONGO_DATABASE: str
+  MONGO_HOSTNAME: str = "localhost"
+  MONGO_PORT: int = 27017
+  MONGO_USERNAME: str = "root"
+  MONGO_PASSWORD: str = "root"
+  MONGO_DATABASE: str = "nosql"
   MONGO_MAX_POOL_SIZE: int = 100
   MONGO_MIN_POOL_SIZE: int = 10
   MONGO_CONNECT_TIMEOUT_MS: int = 10000
   MONGO_SERVER_SELECTION_TIMEOUT_MS: int = 10000
   MONGO_RETRY_WRITES: bool = True
+
+  @computed_field  # type: ignore[prop-decorator]
+  @property
+  def MONGO_URI(self) -> str:
+    """Intelligently construct MongoDB URI."""
+    if ".mongodb.net" in self.MONGO_HOSTNAME:
+      # Atlas connection
+      return f"mongodb+srv://{self.MONGO_USERNAME}:{self.MONGO_PASSWORD}@{self.MONGO_HOSTNAME}/{self.MONGO_DATABASE}"
+    else:
+      # Local/Standard connection
+      auth = f"{self.MONGO_USERNAME}:{self.MONGO_PASSWORD}@" if self.MONGO_USERNAME and self.MONGO_PASSWORD else ""
+      return f"mongodb://{auth}{self.MONGO_HOSTNAME}:{self.MONGO_PORT}/{self.MONGO_DATABASE}"
     
   # Redis settings
-  REDIS_HOST: str
-  REDIS_PORT: int
-  REDIS_USERNAME: str
-  REDIS_PASSWORD: str
+  REDIS_HOST: str = "localhost"
+  REDIS_PORT: int = 6379
+  REDIS_USERNAME: str = ""
+  REDIS_PASSWORD: str = ""
   REDIS_DB: int = 0  
   
-  CACHE_EXPIRE_MINUTES: int
+  CACHE_EXPIRE_MINUTES: int = 60
   
   # Rate limits
-  RATE_LIMIT_ANONYMOUS: str
-  RATE_LIMIT_SELLER: str
-  RATE_LIMIT_CUSTOMER: str
+  RATE_LIMIT_ANONYMOUS: str = "100/minute"
+  RATE_LIMIT_SELLER: str = "500/minute"
+  RATE_LIMIT_CUSTOMER: str = "200/minute"
 
   # Google settings (OAuth)
-  GOOGLE_CLIENT_ID: Optional[str]
-  GOOGLE_CLIENT_SECRET: Optional[str]
-  GOOGLE_FRONTEND_REDIRECT: Optional[str]
+  GOOGLE_CLIENT_ID: Optional[str] = None
+  GOOGLE_CLIENT_SECRET: Optional[str] = None
+  GOOGLE_FRONTEND_REDIRECT: Optional[str] = None
 
-  SECRET_KEY: str
+  SECRET_KEY: str = "changeme"
 
 
   @computed_field  # type: ignore[prop-decorator]
@@ -98,7 +116,7 @@ class Settings(BaseSettings):
 
   # JWT settings
   JWT_ALGORITHM: str = "RS256"
-  JWT_EXPIRE_MINUTES: int
+  JWT_EXPIRE_MINUTES: int = 60
 
   # Generate private key in PEM format
   PRIVATE_KEY_PEM: bytes = private_key.private_bytes(
@@ -115,4 +133,7 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-REDIS_URI = f"redis://{settings.REDIS_USERNAME}:{settings.REDIS_PASSWORD}@{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_DB}"
+if settings.REDIS_USERNAME or settings.REDIS_PASSWORD:
+  REDIS_URI = f"redis://{settings.REDIS_USERNAME}:{settings.REDIS_PASSWORD}@{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_DB}"
+else:
+  REDIS_URI = f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_DB}"
