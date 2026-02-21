@@ -36,7 +36,7 @@ class MongoClient(DBConnection):
     """
     try:
       cls._client = AsyncMongoClient(
-        f"mongodb+srv://{settings.MONGO_USERNAME}:{settings.MONGO_PASSWORD}@{settings.MONGO_HOSTNAME}.mongodb.net/{settings.MONGO_DATABASE}",
+        settings.MONGO_URI,
         maxPoolSize=settings.MONGO_MAX_POOL_SIZE,
         minPoolSize=settings.MONGO_MIN_POOL_SIZE,
         connectTimeoutMS=settings.MONGO_CONNECT_TIMEOUT_MS,
