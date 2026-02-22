@@ -3,6 +3,7 @@ from logging.config import dictConfig
 import logging
 import json
 
+
 # Define structure of logging configuration
 class JsonFormatter(logging.Formatter):
   def format(self, record):
@@ -21,6 +22,7 @@ class JsonFormatter(logging.Formatter):
 
     return json.dumps(log_record)
     
+
 # Define the logging configuration
 log_config = {
   "version": 1,

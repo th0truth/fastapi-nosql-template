@@ -12,6 +12,7 @@ from core.security.utils import DBConnection
 from core.logger import logger
 from core.config import settings
 
+
 class MongoClient(DBConnection):
   _instance: Optional["MongoClient"] = None
   _client: Optional[AsyncMongoClient] = None

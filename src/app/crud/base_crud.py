@@ -3,6 +3,7 @@ from typing import Any, Optional
 from pymongo.asynchronous.database import AsyncDatabase 
 from core.config import ModelType
 
+
 class BaseCRUD:
   def __init__(self, db: AsyncDatabase):
     self.db = db

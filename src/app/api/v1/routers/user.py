@@ -21,6 +21,7 @@ from api.dependencies import (
 from api.dependencies import limit_dependency
 from crud import UserCRUD
 
+
 router = APIRouter(tags=["User"])
 
 

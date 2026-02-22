@@ -5,6 +5,7 @@ from core.logger import logger
 from core.security.utils import Hash
 from .base_crud import BaseCRUD
 
+
 class UserCRUD(BaseCRUD):
   def __init__(self, db):
     super().__init__(db)

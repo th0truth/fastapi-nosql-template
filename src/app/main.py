@@ -15,6 +15,7 @@ from core.database import MongoClient, RedisClient
 from api.dependencies import limiter
 from api.api import api_main_router
 
+
 # Initialize lifespan events
 @asynccontextmanager
 async def lifespan(app: FastAPI):

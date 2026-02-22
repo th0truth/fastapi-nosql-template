@@ -9,11 +9,13 @@ from core.config import settings
 
 # https://www.iana.org/assignments/jwt/jwt.xhtml#claims
 
+
 class OAuthJWTBearer:
   """
     JSON Web Token (JWT) is a compact, URL-safe means of representing
     claims to be transferred between two parties.
   """
+
   @staticmethod
   def encode(payload: dict) -> dict:
     """Encodes a given payload into a JWT,

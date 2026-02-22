@@ -9,6 +9,7 @@ from typing import Any, TypeVar, Annotated, List, Dict, Optional
 # Define a generic type variable
 ModelType = TypeVar("TypeModel", bound=BaseModel)
 
+
 # Parse middleware cors
 def parse_cors(v: Any) -> List[str] | str:
   if isinstance(v, str) and not v.startswith("["):
@@ -22,6 +23,7 @@ def parse_cors(v: Any) -> List[str] | str:
     return v
   raise ValueError(v)
 
+
 # Generate private key for JWT
 private_key = rsa.generate_private_key(
   public_exponent=65537,
@@ -29,12 +31,13 @@ private_key = rsa.generate_private_key(
   backend=default_backend()
 )
 
+
 class Settings(BaseSettings): 
   model_config = SettingsConfigDict(
     env_file=".env",
-    	env_ignore_empty=True,
-      extra="ignore"
-  	)
+    env_ignore_empty=True,
+    extra="ignore"
+  )
     
   # App settings
   NAME: str = "FastAPI-NoSQL-Template"
@@ -48,12 +51,14 @@ class Settings(BaseSettings):
     List[AnyUrl] | str, BeforeValidator(parse_cors)
   ] = []
   
+
   @computed_field  # type: ignore[prop-decorator]
   @property
   def all_cors_origins(self) -> List[str]:
     return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
       self.FRONTEND_HOST
     ]
+
 
   # Versions
   API_V1_STR: str = "/api/v1"
@@ -71,6 +76,7 @@ class Settings(BaseSettings):
   MONGO_SERVER_SELECTION_TIMEOUT_MS: int = 10000
   MONGO_RETRY_WRITES: bool = True
 
+
   @computed_field  # type: ignore[prop-decorator]
   @property
   def MONGO_URI(self) -> str:
@@ -83,6 +89,7 @@ class Settings(BaseSettings):
       auth = f"{self.MONGO_USERNAME}:{self.MONGO_PASSWORD}@" if self.MONGO_USERNAME and self.MONGO_PASSWORD else ""
       return f"mongodb://{auth}{self.MONGO_HOSTNAME}:{self.MONGO_PORT}/{self.MONGO_DATABASE}"
     
+
   # Redis settings
   REDIS_HOST: str = "localhost"
   REDIS_PORT: int = 6379
@@ -109,10 +116,11 @@ class Settings(BaseSettings):
   @property
   def RATE_LIMITS(self) -> Dict[str, str]:
     return {
-    "anonymous": self.RATE_LIMIT_ANONYMOUS,
-    "sellers": self.RATE_LIMIT_SELLER,
-    "customers": self.RATE_LIMIT_ANONYMOUS
-  }
+      "anonymous": self.RATE_LIMIT_ANONYMOUS,
+      "sellers": self.RATE_LIMIT_SELLER,
+      "customers": self.RATE_LIMIT_ANONYMOUS
+    }
+
 
   # JWT settings
   JWT_ALGORITHM: str = "RS256"
@@ -131,7 +139,9 @@ class Settings(BaseSettings):
     format=serialization.PublicFormat.SubjectPublicKeyInfo
   )
 
+
 settings = Settings()
+
 
 if settings.REDIS_USERNAME or settings.REDIS_PASSWORD:
   REDIS_URI = f"redis://{settings.REDIS_USERNAME}:{settings.REDIS_PASSWORD}@{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_DB}"
