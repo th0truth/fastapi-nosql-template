@@ -29,7 +29,7 @@ This project follows a high-performance, async-first philosophy. We value clean 
 ## 🛠️ Development Workflow
 
 ### Branching
-- `main`: The stable branch.
+- `master`: The stable branch.
 - Feature branches: `feat/your-feature-name`
 - Bug fix branches: `fix/issue-description`
 
