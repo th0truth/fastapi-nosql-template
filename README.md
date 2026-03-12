@@ -32,7 +32,7 @@ Most templates are bloated. **FastAPI-NoSQL** is built for developers who care a
 *   **Hybrid Power**: Simultaneous support for **REST** and **GraphQL (Strawberry)**.
 
 ### **🛡️ Security & Auth**
-*   **Asymmetric JWT**: RS256 token signing with auto-generated RSA keypairs.
+*   **Asymmetric JWT**: RS256 token signing with statically generated RSA keypairs.
 *   **Scoped RBAC**: Fine-grained permissions (Admin, Seller, Customer).
 *   **Rate Limiting**: Dynamic, Redis-backed protection via SlowAPI.
 
@@ -57,7 +57,14 @@ git clone https://github.com/th0truth/fastapi-nosql-template.git && cd fastapi-n
 # 2. Inject environment
 cp .env.example .env
 
-# 3. Ignite
+# 3. Generate RSA keys for JWT
+# Generate the keys locally:
+openssl genrsa -out private_key.pem 2048
+openssl rsa -in private_key.pem -pubout -out public_key.pem
+# Then format them for .env (replace newlines with \n and wrap in quotes)
+# Add them to .env as PRIVATE_KEY_PEM="..." and PUBLIC_KEY_PEM="..."
+
+# 4. Ignite
 docker compose up --build
 ```
 
@@ -100,101 +107,9 @@ query {
   }
 }
 ```
+## 📄 License
 
----
-
-## 📂 Architecture
-```text
-.
-├── compose.yaml
-├── Dockerfile
-├── images
-│   └── logo.png
-├── LICENSE
-├── nginx
-│   └── default.conf
-├── prometheus.yaml
-├── pyproject.toml
-├── pytest.ini
-├── README.md
-├── scripts
-│   ├── build.sh
-│   ├── clean.sh
-│   └── run.sh
-├── src
-│   ├── app
-│   │   ├── api
-│   │   │   ├── api.py
-│   │   │   ├── dependencies.py
-│   │   │   ├── graphql
-│   │   │   │   ├── graphql.py
-│   │   │   │   ├── __init__.py
-│   │   │   │   └── resolvers.py
-│   │   │   ├── __init__.py
-│   │   │   ├── v1
-│   │   │   │   ├── api_v1_router.py
-│   │   │   │   ├── __init__.py
-│   │   │   │   └── routers
-│   │   │   └── v2
-│   │   │       ├── api_v2_router.py
-│   │   │       ├── __init__.py
-│   │   │       └── routers
-│   │   ├── core
-│   │   │   ├── config.py
-│   │   │   ├── database
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── mongo.py
-│   │   │   │   └── redis.py
-│   │   │   ├── errors
-│   │   │   │   ├── __init__.py
-│   │   │   │   └── limiter.py
-│   │   │   ├── __init__.py
-│   │   │   ├── logger.py
-│   │   │   ├── middleware
-│   │   │   │   ├── __init__.py
-│   │   │   │   └── limiter.py
-│   │   │   ├── schemas
-│   │   │   │   ├── admin.py
-│   │   │   │   ├── customers.py
-│   │   │   │   ├── graphql.py
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── products.py
-│   │   │   │   ├── sellers.py
-│   │   │   │   ├── student.py
-│   │   │   │   ├── token.py
-│   │   │   │   ├── user.py
-│   │   │   │   └── utils.py
-│   │   │   ├── security
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── jwt.py
-│   │   │   │   └── utils.py
-│   │   │   └── services
-│   │   │       ├── __init__.py
-│   │   │       └── oauth
-│   │   ├── crud
-│   │   │   ├── base_crud.py
-│   │   │   ├── __init__.py
-│   │   │   ├── product_crud.py
-│   │   │   └── user_crud.py
-│   │   ├── __init__.py
-│   │   └── main.py
-│   └── tests
-│       ├── conftest.py
-│       └── routes
-│           ├── test_admin.py
-│           ├── test_auth.py
-│           ├── test_customers.py
-│           ├── test_graphql.py
-│           ├── test_health.py
-│           ├── test_products.py
-│           ├── test_sellers.py
-│           ├── test_user.py
-│           └── test_users.py
-├── tests
-└── uv.lock
-```
-
----
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 <div align="center">
 
