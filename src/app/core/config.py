@@ -1,7 +1,4 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import default_backend
 
 from pydantic import BaseModel, AnyUrl, BeforeValidator, computed_field
 from typing import Any, TypeVar, Annotated, List, Dict, Optional
@@ -22,14 +19,6 @@ def parse_cors(v: Any) -> List[str] | str:
   elif isinstance(v, list | str):
     return v
   raise ValueError(v)
-
-
-# Generate private key for JWT
-private_key = rsa.generate_private_key(
-  public_exponent=65537,
-  key_size=2048,
-  backend=default_backend()
-)
 
 
 class Settings(BaseSettings): 
@@ -126,18 +115,8 @@ class Settings(BaseSettings):
   JWT_ALGORITHM: str = "RS256"
   JWT_EXPIRE_MINUTES: int = 60
 
-  # Generate private key in PEM format
-  PRIVATE_KEY_PEM: bytes = private_key.private_bytes(
-    encoding=serialization.Encoding.PEM,
-    format=serialization.PrivateFormat.PKCS8,
-    encryption_algorithm=serialization.NoEncryption()
-  )
-
-  # Generate public key in PEM format   
-  PUBLIC_KEY_PEM: bytes = private_key.public_key().public_bytes(
-    encoding=serialization.Encoding.PEM,
-    format=serialization.PublicFormat.SubjectPublicKeyInfo
-  )
+  PRIVATE_KEY_PEM: str
+  PUBLIC_KEY_PEM: str
 
 
 settings = Settings()
