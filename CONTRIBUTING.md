@@ -1,85 +1,96 @@
 # Contributing to FastAPI NoSQL Template
 
-First off, thank you for considering contributing to the FastAPI NoSQL Template! It's people like you who make this project a great tool for the community.
+Thank you for your interest in contributing to **FastAPI NoSQL Template**. Contributions are essential for maintaining a high-performance, robust, and clean framework for the community.
 
-This project follows a high-performance, async-first philosophy. We value clean abstractions, strict typing, and comprehensive testing.
+This project follows an async-first philosophy emphasizing clean abstractions, strict typing, complete test coverage, and strict compliance with PEP 8 standards.
 
-## 🏁 Getting Started
+---
+
+## Getting Started
 
 ### Prerequisites
 - Python 3.11+
-- [uv](https://github.com/astral-sh/uv) (for lightning-fast dependency management)
-- Docker and Docker Compose
+- [uv](https://github.com/astral-sh/uv) (Package Manager)
+- Docker & Docker Compose
 
-### Local Setup
-1. Fork the repository and clone it locally.
-2. Install dependencies:
+### Local Environment Setup
+
+1. **Fork and Clone the Repository**
+   ```bash
+   git clone https://github.com/th0truth/fastapi-nosql-template.git
+   cd fastapi-nosql-template
+   ```
+
+2. **Install Dependencies**
    ```bash
    uv sync
    ```
-3. Set up your environment:
+
+3. **Configure Environment**
    ```bash
    cp .env.example .env
    ```
-4. Run the development environment:
+
+4. **Start Application Stack**
    ```bash
    docker compose up --build
    ```
 
-## 🛠️ Development Workflow
+---
 
-### Branching
-- `master`: The stable branch.
-- Feature branches: `feat/your-feature-name`
-- Bug fix branches: `fix/issue-description`
+## Development Workflow
 
-### Code Style
-We strictly adhere to modern Python standards:
-- **Typing**: All functions and methods must have type hints.
-- **Async**: Use `async/await` for all I/O operations.
-- **Pydantic**: Use Pydantic v2 models for data validation.
-- **Linting/Formatting**: We use `ruff` for linting and formatting. Run it before committing:
+### Branching Strategy
+- `master`: Main production-ready branch.
+- Feature branches: `feat/feature-name`
+- Bug fixes: `fix/issue-description`
+
+### Code Quality & Standards
+All contributions must adhere to the following guidelines:
+- **PEP 8 Compliance**: Strict compliance with PEP 8 guidelines, 2-space indentation width, and explicit line length limits ($\le 88$ characters).
+- **Type Annotations**: Full typing on all functions, classes, and methods.
+- **Asynchronous I/O**: Use `async/await` syntax for all I/O operations.
+- **Pydantic v2**: Use Pydantic v2 models for schema validation.
+- **Linting & Formatting**: Ensure `ruff` checks and formatting pass prior to submitting code:
   ```bash
   uv run ruff check .
-  uv run ruff format .
+  uv run ruff format --config 'indent-width=2' .
+  ```
+- **Custom Indentation Width**: To convert the codebase to 4-space indentation for local development or project standards:
+  ```bash
+  uv run ruff format --config 'indent-width=4' .
   ```
 
-### Testing
-We maintain **100% test coverage**. Every new feature or bug fix must include tests.
-- Run tests:
+### Testing & Coverage
+We enforce high test coverage across all core modules:
+- **Execute Test Suite**:
   ```bash
   uv run pytest
   ```
-- Check coverage:
+- **Verify Coverage**:
   ```bash
   uv run pytest --cov=src
   ```
 
-## 🤝 How to Contribute
+---
 
-### Reporting Bugs
-If you find a bug, please open an issue and include:
-- A clear description of the bug.
-- Steps to reproduce the issue.
-- Expected vs. actual behavior.
-- Environment details (OS, Python version).
+## Submitting Contributions
 
-### Suggesting Enhancements
-We welcome ideas for new features! When suggesting an enhancement:
-- Explain why the feature is needed.
-- Provide examples of how it would be used.
-- Consider if it fits the "minimalist backbone" philosophy.
+### Reporting Issues
+When reporting a bug, please create a clear issue detailing:
+- Summary and steps to reproduce.
+- Expected versus actual behavior.
+- Operating system and Python environment specifications.
 
 ### Pull Requests
-1. Create a branch for your changes.
-2. Write clean, documented code.
-3. Add or update tests to ensure coverage remains at 100%.
-4. Ensure all linting and tests pass locally.
-5. Submit a PR with a clear description of your changes.
-
-## 📜 License
-By contributing, you agree that your contributions will be licensed under the project's [LICENSE](LICENSE).
+1. Create a focused branch for your changes.
+2. Implement your changes following PEP 8 and project style guidelines.
+3. Add unit or integration tests to cover new functionality.
+4. Verify all linting rules and test suites pass locally.
+5. Submit a pull request with a descriptive summary of your changes.
 
 ---
 
-**Thank you for helping build the future of NoSQL-native FastAPI applications!** ⚡
+## License
+
+By contributing to this repository, you agree that your contributions will be licensed under the project's [MIT License](LICENSE).
