@@ -1,4 +1,5 @@
 from bson import ObjectId
+
 from .base_crud import BaseCRUD
 
 
@@ -16,4 +17,6 @@ class ProductCRUD(BaseCRUD):
 
   async def update_product(self, category: str, product_id: str, update_data: dict):
     """Updates product by category and ID."""
-    return await self.update(category, update=update_data, filter={"_id": ObjectId(product_id)})
+    return await self.update(
+      category, update=update_data, filter={"_id": ObjectId(product_id)}
+    )

@@ -1,13 +1,14 @@
 from fastapi import APIRouter
+
 from .routers import (
-  health,
-  google_auth,
+  admin,
   auth,
+  customers,
+  google_auth,
+  health,
+  sellers,
   user,
   users,
-  sellers,
-  customers,
-  admin
 )
 
 # Initialize v1 router

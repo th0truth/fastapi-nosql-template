@@ -1,11 +1,11 @@
+from core.config import settings
 from fastapi import APIRouter
 
-from core.config import settings
+from .graphql import graphql_app
 
 # Import API routers
 from .v1 import api_v1_router
 from .v2 import api_v2_router
-from .graphql import graphql_app
 
 # Initialize main router
 api_main_router = APIRouter()

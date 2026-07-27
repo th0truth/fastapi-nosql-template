@@ -1,5 +1,4 @@
 from authlib.integrations.starlette_client import OAuth
-
 from core.config import settings
 
 # Configure OAuth
@@ -12,5 +11,5 @@ google_oauth.register(
   authorize_params={"scope": "openid email profile"},
   access_token_url="https://oauth2.googleapis.com/token",
   client_kwargs={"scope": "openid email profile"},
-  server_metadata_url="https://accounts.google.com/.well-known/openid-configuration"
+  server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
 )

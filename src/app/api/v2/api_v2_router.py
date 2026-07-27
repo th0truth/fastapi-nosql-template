@@ -1,7 +1,6 @@
 from fastapi import APIRouter
-from .routers import (
-  products
-)
+
+from .routers import products
 
 # Initialize v2 router
 api_v2_router = APIRouter()

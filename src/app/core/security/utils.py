@@ -1,5 +1,6 @@
-from passlib.context import CryptContext
 from abc import ABC, abstractmethod
+
+from passlib.context import CryptContext
 
 
 class Hash:
@@ -9,13 +10,13 @@ class Hash:
   def hash(cls, plain: str) -> str:
     """Return hashed password."""
     return cls.context.hash(secret=plain)
-          
+
   @classmethod
   def verify(cls, plain: str, hashed: str) -> bool:
     """Return bool type of the verified password."""
     return cls.context.verify(secret=plain, hash=hashed)
-  
-  
+
+
 class DBConnection(ABC):
   """Abstract base class for DB instance client."""
 

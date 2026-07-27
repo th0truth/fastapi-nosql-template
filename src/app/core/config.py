@@ -1,7 +1,7 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Annotated, Any, Dict, List, Optional, TypeVar
 
-from pydantic import BaseModel, AnyUrl, BeforeValidator, computed_field
-from typing import Any, TypeVar, Annotated, List, Dict, Optional
+from pydantic import AnyUrl, BaseModel, BeforeValidator, computed_field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Define a generic type variable
 ModelType = TypeVar("TypeModel", bound=BaseModel)
@@ -12,8 +12,8 @@ def parse_cors(v: Any) -> List[str] | str:
   if isinstance(v, str) and not v.startswith("["):
     # Filter out comments (starting with #) and empty strings
     return [
-      item.strip() 
-      for item in v.split(",") 
+      item.strip()
+      for item in v.split(",")
       if item.strip() and not item.strip().startswith("#")
     ]
   elif isinstance(v, list | str):
@@ -21,13 +21,11 @@ def parse_cors(v: Any) -> List[str] | str:
   raise ValueError(v)
 
 
-class Settings(BaseSettings): 
+class Settings(BaseSettings):
   model_config = SettingsConfigDict(
-    env_file=".env",
-    env_ignore_empty=True,
-    extra="ignore"
+    env_file=".env", env_ignore_empty=True, extra="ignore"
   )
-    
+
   # App settings
   NAME: str = "FastAPI-NoSQL-Template"
   DESCRIPTION: str = ""
@@ -36,10 +34,7 @@ class Settings(BaseSettings):
 
   FRONTEND_HOST: str = "http://localhost:8000"
 
-  BACKEND_CORS_ORIGINS: Annotated[
-    List[AnyUrl] | str, BeforeValidator(parse_cors)
-  ] = []
-  
+  BACKEND_CORS_ORIGINS: Annotated[List[AnyUrl] | str, BeforeValidator(parse_cors)] = []
 
   @computed_field  # type: ignore[prop-decorator]
   @property
@@ -48,12 +43,11 @@ class Settings(BaseSettings):
       self.FRONTEND_HOST
     ]
 
-
   # Versions
   API_V1_STR: str = "/api/v1"
   API_V2_STR: str = "/api/v2"
 
-  # MongoDB settings    
+  # MongoDB settings
   MONGO_HOSTNAME: str = "localhost"
   MONGO_PORT: int = 27017
   MONGO_USERNAME: str = "root"
@@ -65,7 +59,6 @@ class Settings(BaseSettings):
   MONGO_SERVER_SELECTION_TIMEOUT_MS: int = 10000
   MONGO_RETRY_WRITES: bool = True
 
-
   @computed_field  # type: ignore[prop-decorator]
   @property
   def MONGO_URI(self) -> str:
@@ -75,19 +68,25 @@ class Settings(BaseSettings):
       return f"mongodb+srv://{self.MONGO_USERNAME}:{self.MONGO_PASSWORD}@{self.MONGO_HOSTNAME}/{self.MONGO_DATABASE}"
     else:
       # Local/Standard connection
-      auth = f"{self.MONGO_USERNAME}:{self.MONGO_PASSWORD}@" if self.MONGO_USERNAME and self.MONGO_PASSWORD else ""
-      return f"mongodb://{auth}{self.MONGO_HOSTNAME}:{self.MONGO_PORT}/{self.MONGO_DATABASE}"
-    
+      auth = (
+        f"{self.MONGO_USERNAME}:{self.MONGO_PASSWORD}@"
+        if self.MONGO_USERNAME and self.MONGO_PASSWORD
+        else ""
+      )
+
+      return (
+        f"mongodb://{auth}{self.MONGO_HOSTNAME}:{self.MONGO_PORT}/{self.MONGO_DATABASE}"
+      )
 
   # Redis settings
   REDIS_HOST: str = "localhost"
   REDIS_PORT: int = 6379
   REDIS_USERNAME: str = ""
   REDIS_PASSWORD: str = ""
-  REDIS_DB: int = 0  
-  
+  REDIS_DB: int = 0
+
   CACHE_EXPIRE_MINUTES: int = 60
-  
+
   # Rate limits
   RATE_LIMIT_ANONYMOUS: str = "100/minute"
   RATE_LIMIT_SELLER: str = "500/minute"
@@ -100,16 +99,14 @@ class Settings(BaseSettings):
 
   SECRET_KEY: str = "changeme"
 
-
   @computed_field  # type: ignore[prop-decorator]
   @property
   def RATE_LIMITS(self) -> Dict[str, str]:
     return {
       "anonymous": self.RATE_LIMIT_ANONYMOUS,
       "sellers": self.RATE_LIMIT_SELLER,
-      "customers": self.RATE_LIMIT_ANONYMOUS
+      "customers": self.RATE_LIMIT_ANONYMOUS,
     }
-
 
   # JWT settings
   JWT_ALGORITHM: str = "RS256"

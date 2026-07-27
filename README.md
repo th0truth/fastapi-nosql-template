@@ -45,6 +45,7 @@ Most templates are bloated. **FastAPI-NoSQL** is built for developers who care a
 *   **Prometheus Ready**: Built-in `/metrics` endpoint and structured JSON logging.
 *   **100% Coverage**: Exhuastive test suite with full MongoDB and Redis mocking.
 *   **Nginx Gateway**: Production-ready container orchestration.
+*   **Strict PEP 8 Code Quality**: Standardized formatting, 2-space indentation, explicit line-length limits, and PEP 8 control statement spacing throughout the codebase.
 
 ---
 

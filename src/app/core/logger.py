@@ -1,7 +1,7 @@
+import json
+import logging
 from datetime import datetime, timezone
 from logging.config import dictConfig
-import logging
-import json
 
 
 # Define structure of logging configuration
@@ -13,7 +13,7 @@ class JsonFormatter(logging.Formatter):
       "logger": record.name,
       "module": record.module,
       "line": record.lineno,
-      "message": record.getMessage()
+      "message": record.getMessage(),
     }
 
     # Add exception info if available
@@ -21,17 +21,13 @@ class JsonFormatter(logging.Formatter):
       log_record["exception"] = self.formatException(record.exc_info)
 
     return json.dumps(log_record)
-    
+
 
 # Define the logging configuration
 log_config = {
   "version": 1,
   "disable_existing_loggers": False,
-  "formatters": {
-    "json": {
-      "()": JsonFormatter
-    }
-  },
+  "formatters": {"json": {"()": JsonFormatter}},
   "handlers": {
     "console": {
       "class": "logging.StreamHandler",
@@ -42,7 +38,6 @@ log_config = {
   },
   "loggers": {
     "app": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
-
     "pymongo": {"level": "WARNING"},
     "pymongo.command": {"level": "WARNING"},
     "pymongo.connection": {"level": "WARNING"},

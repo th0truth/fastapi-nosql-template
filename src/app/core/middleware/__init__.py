@@ -1,5 +1,3 @@
-__all__ = [
-  "RateLimitMiddleware"
-]
+__all__ = ["RateLimitMiddleware"]
 
 from .limiter import RateLimitMiddleware
